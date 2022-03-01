@@ -539,7 +539,7 @@
       A_matrix_loc=0
       ALLOCATE(A_matrix(num_bands,num_wann,num_kpts,WDES%ISPIN))
       ALLOCATE(eigenvalues(num_bands,num_kpts,WDES%ISPIN))
-
+      ALLOCATE(M_matrix(num_bands,num_bands,nntot,num_kpts,WDES%ISPIN)) 
       ! just a precaution, in case the compiler does not
       ! nullify pointers by default
       R%R=>NULL(); R%SI=>NULL()
@@ -915,7 +915,7 @@
       DEALLOCATE(EXCLUDE_BAND)
       DEALLOCATE(A_matrix,A_matrix_loc,eigenvalues)
       DEALLOCATE(S)
-
+      DEALLOCATE(M_matrix)
       IF (ASSOCIATED(R%R)) THEN
          DEALLOCATE(R%R); NULLIFY(R%R)
       ENDIF
