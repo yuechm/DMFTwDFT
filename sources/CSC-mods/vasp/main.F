@@ -382,14 +382,8 @@
       COMMON /BEEFENS/ LBEEFCALCBASIS,LBEEFBAS
 #endif
       ! DMFTwDFT
-      ! !integer, parameter :: dp = kind(1.0d0)
-      !real(kind=dp),allocatable :: DMFT_eval_(:,:)
-      !complex(kind=dp),allocatable :: DMFT_evec_(:,:,:)
       INTEGER NB, NK, NP, NBG
       REAL(q) POTIM !tot_n
-     ! COMPLEX(q),allocatable :: WaveW(:,:,:),WaveW_tot(:,:,:)
-     ! COMPLEX(q),allocatable :: WProj(:,:,:),WProj_tot(:,:,:)
-     ! REAL(q),allocatable :: FERWE(:,:)
 
        REAL(q) DMFT_eval_norm
        integer eig_i,eig_k,num_wannier
@@ -399,7 +393,6 @@
         subroutine Compute_DMFT(n_kpts_loc,n_wann,kpt_dft,wght_dft,band_win_loc,DMFT_eval,DMFT_evec)
 
         implicit none
-        !integer, intent(in) :: mpi_comm_world,mpi_sum,mpi_integer
         integer, parameter :: dp = kind(1.0d0)
         integer, intent(in) :: n_kpts_loc,n_wann
         real(kind=dp), intent(in) :: kpt_dft(3,n_kpts_loc)
@@ -412,7 +405,6 @@
         subroutine Compute_DMFT_from_amn(n_kpts_loc,n_wann,kpt_dft,wght_dft,band_win_loc,DMFT_eval,DMFT_evec)
 
         implicit none
-        !integer, intent(in) :: mpi_comm_world,mpi_sum,mpi_integer
         integer, parameter :: dp = kind(1.0d0)
         integer, intent(in) :: n_kpts_loc,n_wann
         real(kind=dp), intent(in) :: kpt_dft(3,n_kpts_loc)
@@ -425,7 +417,6 @@
         subroutine Compute_tetra_force(n_kpts_loc,n_wann,kpt_dft,wght_dft,band_win_loc,DMFT_EDM)
 
         implicit none
-        !integer, intent(in) :: mpi_comm_world,mpi_sum,mpi_integer
         integer, parameter :: dp = kind(1.0d0)
         integer, intent(in) :: n_kpts_loc,n_wann
         real(kind=dp), intent(in) :: kpt_dft(3,n_kpts_loc)
@@ -437,7 +428,6 @@
         subroutine Compute_tetra(n_kpts_loc,n_wann,kpt_dft,wght_dft,band_win_loc,DMFT_eval,DMFT_evec)
 
         implicit none
-        !integer, intent(in) :: mpi_comm_world,mpi_sum,mpi_integer
         integer, parameter :: dp = kind(1.0d0)
         integer, intent(in) :: n_kpts_loc,n_wann
         real(kind=dp), intent(in) :: kpt_dft(3,n_kpts_loc)
@@ -450,7 +440,6 @@
         subroutine Compute_tetra_from_amn(n_kpts_loc,n_wann,kpt_dft,wght_dft,band_win_loc,DMFT_eval,DMFT_evec)
 
         implicit none
-        !integer, intent(in) :: mpi_comm_world,mpi_sum,mpi_integer
         integer, parameter :: dp = kind(1.0d0)
         integer, intent(in) :: n_kpts_loc,n_wann
         real(kind=dp), intent(in) :: kpt_dft(3,n_kpts_loc)
@@ -2686,9 +2675,7 @@
               WRITE(TIU0,*)'initial charge from wavefunction'
 
          !DMFTwDFT
-  
          inquire(file='dmft_params.dat',exist=LDMFT)
-         !LDMFT=.FALSE.
          if (LDMFT.eq..TRUE.) then
          IF (IO%IU6>=0) &
                 WRITE(TIU6,*)'DFT+DMFT run with DMFTwDFT'
@@ -2699,29 +2686,11 @@
 
            num_wannier=0
            CALL ParseWannier90(num_wannier)
-           !CALL CHECK_FULL_KPOINTS
-           !num_wann_=14
-            num_wann_ = num_wannier
-           !write(*,*) 'hi'
-           !allocate(DMFT_eval_(28,KPOINTS_FULL%NKPTS))
-           !allocate(DMFT_evec_(28,28,KPOINTS_FULL%NKPTS))
-           !allocate(band_win_(2,KPOINTS_FULL%NKPTS))
+           print *, "num_wannier", num_wannier, "WDES%NKPTS", WDES%NKPTS
+           num_wann_ = num_wannier
            allocate(DMFT_eval_(num_wann_,WDES%NKPTS))
            allocate(DMFT_evec_(num_wann_,num_wann_,WDES%NKPTS))
            allocate(band_win_(2,WDES%NKPTS))
-           !CALL CHECK_FULL_KPOINTS
-           !num_wann_=28
-           !allocate(DMFT_EDM_(17,num_wann_,WDES%NKPTS))
-           !allocate(band_win_(2,WDES%NKPTS))
-           !CALL Compute_tetra_force(WDES%NKPTS,num_wann_,WDES%VKPT,WDES%WTKPT,band_win_,DMFT_EDM_)
-           !CALL
-           !MLWF_WANNIER90_AMN(WDES,W,P,CQIJ,T_INFO,LATT_CUR,INFO,IO)
-           !CALL MPI_barrier( WDES%COMM%MPI_COMM, ierr )
-           !write(*,*) 'hi'
-           !CALL
-           !CALL Compute_DMFT(KPOINTS_FULL%NKPTS,num_wann_,KPOINTS_FULL%VKPT,KPOINTS_FULL%WTKPT,band_win_,DMFT_eval_,DMFT_evec_)
-           !write(*,*) 'hi2'
-           !CALL Compute_tetra(KPOINTS_FULL%NKPTS,num_wann_,KPOINTS_FULL%VKPT,KPOINTS_FULL%WTKPT,band_win_,DMFT_eval_,DMFT_evec_)
            CALL Compute_DMFT(WDES%NKPTS,num_wann_,WDES%VKPT,WDES%WTKPT,band_win_,DMFT_eval_,DMFT_evec_)
              ! Print the eigen values for the wannier manifold for each
              ! k-point
@@ -2735,20 +2704,10 @@
                 enddo
             enddo
             close(1)
-           !print *, band_win_
-           !STOP
-!           CALL Compute_tetra(WDES%NKPTS,num_wann_,WDES%VKPT,WDES%WTKPT,band_win_,DMFT_eval_,DMFT_evec_)
-           !CALL Compute_tetra_from_amn(WDES%NKPTS,num_wann_,WDES%VKPT,WDES%WTKPT,band_win_,DMFT_eval_,DMFT_evec_)
-           !CALL
-           !Compute_DMFT_from_amn(WDES%NKPTS,num_wann_,WDES%VKPT,WDES%WTKPT,band_win_,DMFT_eval_,DMFT_evec_)
-           !IF (IO%IU6>=0) then
-           !  DO IK=1,WDES%NKPTS
-           !    write(*,*) IK,DMFT_eval_(:,IK),DMFT_evec_(:,1,IK)
-           !  ENDDO
-           !ENDIF
-           !STOP
          endif
-         !LDMFT=.FALSE.
+         do ii=1, WDES%NKPTS
+             write(123,*) ii, band_win_(1,ii), band_win_(2,ii)
+         enddo
 
          CALL SET_CHARGE(W, WDES, INFO%LOVERL, &
               GRID, GRIDC, GRID_SOFT, GRIDUS, C_TO_US, SOFT_TO_C, &
@@ -2757,9 +2716,7 @@
 
          CALL SET_KINEDEN(GRID,GRID_SOFT,GRIDC,SOFT_TO_C,LATT_CUR,SYMM, &
               T_INFO%NIONS,W,WDES,KINEDEN)      
-         !print *, band_win_
          !print *, RHO0(GRIDC, CHTOT(1,1))
-         !STOP
       ENDIF
 
 !=======================================================================
@@ -3000,15 +2957,6 @@ io_end
             CALL REALLOCATE_WAVE( W, GRID, WDES, NONL_S, T_INFO, P, LATT_CUR)
          ENDIF
          CALL MLWF_WANNIER90(WDES,W,P,CQIJ,T_INFO,LATT_CUR,INFO,IO)
-         !CALL MLWF_WANNIER90_dS(WDES,W,P,CQIJ,T_INFO,LATT_CUR,INFO,IO)
-         !DO I=1,T_INFO%NIOND
-         !  DO J=1,3
-         !    POTIM=1E-2_q
-         !    CALL MLWF_WANNIER90_LR(WDES,W,P,CQIJ,T_INFO,LATT_CUR,INFO,IO,I,J,POTIM)
-         !    POTIM=-1E-2_q
-         !    CALL MLWF_WANNIER90_LR2(WDES,W,P,CQIJ,T_INFO,LATT_CUR,INFO,IO,I,J,POTIM)
-         !  ENDDO
-         !ENDDO
          IF ((SYMM%ISYM>=0.AND. .NOT.WDES%LGAMMA) .AND. LWRITE_WANPROJ) THEN
             CALL INISYM(LATT_CUR%A,T_INFO%POSION,DYN%VEL,T_INFO%LSFOR, &
                  T_INFO%LSDYN,T_INFO%NTYP,T_INFO%NITYP,T_INFO%NIONS, &
@@ -3625,13 +3573,6 @@ ibrion: IF (DYN%IBRION==0) THEN
           CHDEN,SV,DOS,DOSI,CHAM, &
           DYN%IBRION,LMDIM,IRDMAX,NEDOS, &
           TOTEN,EFERMI, TIFOR)
-       ! Benny put here
-!#ifdef VASP2WANNIER90
-!         write(*,*) 'Check if MLWF works'
-!         CALL KPAR_SYNC_ALL(WDES,W)
-!         CALL MLWF_WANNIER90(WDES,W,P,CQIJ,T_INFO,LATT_CUR,INFO,IO)
-!#endif
-
        END IF ! LJ_ONLY
 
 
